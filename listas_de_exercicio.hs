@@ -58,4 +58,28 @@ vendaTotal x
     |(x == 0) = vendas 0
     |otherwise = vendas x + vendaTotal(x-1)
 
---main = putStr(show(vendaTotal 2))
+------------ Lista 2 - Exercícios de Programação Haskell II 
+
+-- Exercicio 1
+maxInt :: Int -> Int -> Int
+maxInt x y 
+    | (x > y) = x
+    | otherwise = y
+
+-- Exercicio 2
+maiorVenda :: Int -> Int
+maiorVenda n
+    | (n == 0) = vendas 0
+    | otherwise = maxInt (vendas n) (maiorVenda (n-1))
+
+--Exercicio 3
+maxVenda :: Int -> Int
+maxVenda n
+    | (n == 0) = 0
+    | (maiorVenda n == vendas n) = n
+    | otherwise = maxVenda(n-1)
+
+-- Exercicio 4
+-- Continuar aqui outro dia 
+
+--main = putStr(show(maxVenda 4))
