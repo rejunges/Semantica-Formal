@@ -82,4 +82,84 @@ maxVenda n
 -- Exercicio 4
 -- Continuar aqui outro dia 
 
+
+------------ Lista 3 - Exercícios Sobre Listas
+
+-- Exercicio 1 
+dobraLista :: [Int] -> [Int]
+dobraLista [] = []
+dobraLista (x:xs) = x * 2 : dobraLista xs
+
+-- Exercicio 2
+tamanho :: [Int] -> Int
+tamanho [] = 0
+tamanho (x:xs) = 1 + tamanho xs
+
+-- Exercicio 3
+produtoLista :: [Int] -> Int
+produtoLista [] = error "Error de lista vazia, tenta novamente com algum elemento"
+produtoLista [x] = x
+produtoLista (x:xs) = x * produtoLista xs
+
+-- Exercicio 4
+andLista :: [Bool] -> Bool
+andLista [] = error "Não é possível fazer um AND da lista se ela é vazia"
+andLista [x] = x
+andLista (x:xs) = x && andLista xs
+
+-- Exercicio 5
+concatLista :: [[Int]] -> [Int]
+concatLista [] = []
+concatLista (x:xs) = x ++ concatLista xs
+
+-- Exercicio 6
+inverteLista :: [Int] -> [Int] 
+inverteLista [] = []
+inverteLista (x:xs) = inverteLista xs ++ [x]
+
+------------ Lista 4 - Exercícios Sobre Listas II
+
+-- Exercicio 1
+membro :: [Int] -> Int -> Bool
+membro [] n = False
+membro (x:xs) n
+    |n == x = True
+    |otherwise = membro xs n
+
+-- Exercicio 2
+membroNum :: [Int] -> Int -> Int
+membroNum [] n = 0
+membroNum (x:xs) n
+    |n == x = 1 + membroNum xs n
+    |otherwise = membroNum xs n
+
+-- Exercicio 3 
+membro2 :: [Int] -> Int -> Bool
+membro2 (x:xs) n
+    |membroNum (x:xs) n > 0 = True
+    |otherwise = False 
+
+-- Exercicio 4
+unico :: [Int] -> [Int]
+unico [] = []
+unico (x:xs)
+    |(membroNum (x:xs) x == 1) = x : unico xs
+    |(membroNum (x:xs) x > 1) = unico (removeNumero (x:xs) x) 
+
+removeNumero :: [Int] -> Int -> [Int]
+removeNumero [] n = []
+removeNumero (x:xs) n 
+    |n == x = removeNumero xs n
+    |otherwise = x:removeNumero xs n
+
+-- Exercicio 5
+--membro3 :: [Int] -> Int -> Bool
+
+--iSort [Int] -> [Int]
+--iSort [] = []
+--iSort (x:xs) 
+--Continuar outro dia...
+
+
 --main = putStr(show(maxVenda 4))
+
