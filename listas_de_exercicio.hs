@@ -163,3 +163,125 @@ removeNumero (x:xs) n
 
 --main = putStr(show(maxVenda 4))
 
+------------ Lista 5 - Exercícios sobre Tipos Algébricos Recursivos
+data Temperatura = Frio | Calor
+    deriving(Eq,Show)
+
+data Estacao = Verao | Outono | Inverno | Primavera
+
+tempo :: Estacao -> Temperatura
+tempo Verao = Calor
+tempo _ = Frio
+
+data Forma = Circulo Float |Retangulo Float Float
+    deriving(Eq,Show)
+
+redondo :: Forma -> Bool
+redondo (Circulo x) = True
+redondo (Retangulo x y) = False
+
+area :: Forma -> Float
+area (Circulo r) = pi * r *r
+area (Retangulo b a) = b * a
+
+-- Uma arvore binaria de inteiros:
+data Arvore = Folha | Nodo Int Arvore Arvore
+    deriving(Eq,Show)
+
+-- Uma arvore binaria polimorfica:
+-- data ArvoreP a = Folha | Nodo a (ArvoreP a) (ArvoreP a)
+
+minhaArvore :: Arvore
+minhaArvore = Nodo 10 (Nodo 14 (Nodo 1 Folha Folha) Folha) Folha
+
+somaArvore :: Arvore -> Int
+somaArvore Folha = 0
+somaArvore (Nodo n a1 a2) = n + somaArvore a1 + somaArvore a2
+
+multiplica2xArvore :: Arvore -> Arvore
+multiplica2xArvore Folha = Folha
+multiplica2xArvore (Nodo n a1 a2) = Nodo (2*n)  (multiplica2xArvore a1)  (multiplica2xArvore a2)
+
+maiorElemArvore :: Arvore -> Int
+maiorElemArvore Folha = 0
+maiorElemArvore (Nodo n a1 a2) = maxInt (maxInt n (maiorElemArvore a1)) (maiorElemArvore a2)
+
+ocorreIntArvore :: Arvore -> Int -> Bool
+ocorreIntArvore Folha x = False
+ocorreIntArvore (Nodo n a1 a2) x = n == x || ocorreIntArvore a1 x || ocorreIntArvore a2 x 
+
+intXArvore :: Arvore -> Int -> Int
+intXArvore Folha x = 0
+intXArvore (Nodo n a1 a2) x
+    | n == x = 1 + (intXArvore a1 x) + (intXArvore a2 x)
+    | otherwise = (intXArvore a1 x) + (intXArvore a2 x)
+
+refleteArvore :: Arvore -> Arvore
+refleteArvore Folha = Folha
+refleteArvore (Nodo n a1 a2) = Nodo n (refleteArvore a2) (refleteArvore a1)
+
+arvoreToList :: Arvore -> [Int]
+arvoreToList Folha = []
+arvoreToList (Nodo n a1 a2) = (n : []) ++ arvoreToList a1 ++ arvoreToList a2
+
+myMult :: Int -> Int
+myMult x = 3 * x
+
+mapTree :: (Int -> Int) -> Arvore -> Arvore
+mapTree f Folha = Folha
+mapTree f (Nodo n a1 a2) = Nodo (f n) (mapTree f a1) (mapTree f a2)
+
+data Lista = Fim | Node Int Lista
+    deriving(Eq,Show)
+
+minhaLista :: Lista
+minhaLista = Node 10 (Node 9 (Node 11 (Node 502 (Fim))))
+
+tamanhoLista :: Lista -> Int
+tamanhoLista Fim = 0
+tamanhoLista (Node n p) = 1 + (tamanhoLista p)
+
+mapList :: (Int -> Int) -> Lista -> Lista
+mapList f Fim = Fim
+mapList f (Node n p) = Node (f n) (mapList f p)
+
+
+-- Pre trabalho
+
+data B = TRUE | FALSE | Not B | And B B | Or B B
+	deriving (Eq, Show)
+
+data E = Num Int | Soma E E | Mult E E | If B E E
+	deriving (Eq, Show)
+
+-- 1 * (2+3)
+prog1 :: E
+prog1 = Mult (Num 1) (Soma (Num 2) (Num 3))
+
+-- (3*2) + (4*5)
+prog2 :: E
+prog2 = Soma (Mult (Num 3) (Num 2)) (Mult (Num 4) (Num 5))
+
+prog3 :: E
+prog3 = If (Or FALSE FALSE) prog2 prog1
+
+bigStepE :: E -> Int
+bigStepE (Num n) = n
+bigStepE (Soma e1 e2) = (bigStepE e1) + (bigStepE e2)
+bigStepE (Mult e1 e2) = (bigStepE e1) * (bigStepE e2)
+bigStepE (If b1 e1 e2)
+    |bigStepB b1 = bigStepE e1
+    |otherwise = bigStepE e2
+ 
+
+progB :: B
+progB = Or (And TRUE FALSE) (Not (Not TRUE)) 
+
+bigStepB :: B -> Bool
+bigStepB TRUE = True
+bigStepB FALSE = False
+bigStepB (Not b) = not (bigStepB b)
+bigStepB (And b1 b2) = (bigStepB b1) && (bigStepB b2) 
+bigStepB (Or b1 b2) = (bigStepB b1) || (bigStepB b2)
+
+-- case (bigStep b) of True-> False False -> True
