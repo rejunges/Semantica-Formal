@@ -248,7 +248,7 @@ mapList f (Node n p) = Node (f n) (mapList f p)
 
 -- Pre trabalho
 
-data B = TRUE | FALSE | Not B | And B B | Or B B
+data B = TRUE | FALSE | Not B | And B B | Or B B | Leq E E
 	deriving (Eq, Show)
 
 data E = Num Int | Soma E E | Mult E E | If B E E
@@ -285,3 +285,50 @@ bigStepB (And b1 b2) = (bigStepB b1) && (bigStepB b2)
 bigStepB (Or b1 b2) = (bigStepB b1) || (bigStepB b2)
 
 -- case (bigStep b) of True-> False False -> True
+prog4 :: E
+prog4 = Soma (Mult(Num 2) (Num 4)) (Mult(Num 9) (Num 7))
+
+smallStepE :: E -> E
+smallStepE (Soma (Num n1) (Num n2)) = Num (n1 + n2)
+smallStepE (Soma (Num n) e ) = Soma (Num n) (smallStepE e)
+smallStepE (Soma e1 e2) = Soma (smallStepE e1) e2
+smallStepE (Mult (Num n1) (Num n2)) = Num (n1 * n2)
+smallStepE (Mult (Num n) e ) = Mult (Num n) (smallStepE e)
+smallStepE (Mult e1 e2) = Mult (smallStepE e1) e2
+
+interpretE2 :: E -> Int
+interpretE2 (Num n) = n
+interpretE2 e = interpretE2 (interpretE e)
+
+interpretE :: E->E
+interpretE e = if (isFinalE e) then e else interpretE (smallStepE e)
+
+isFinalE :: E -> Bool
+isFinalE(Num e) = True
+isFinalE _ = False
+
+prog5 :: B
+prog5 = Leq (Soma (Num 0) (Num 10)) (Mult (Num 1) (Num 10))
+
+smallStepB :: B -> B
+smallStepB (Not TRUE) = FALSE
+smallStepB (Not FALSE) = TRUE
+smallStepB (Not b) = Not (smallStepB b)
+smallStepB (And TRUE b2) = b2
+smallStepB (And FALSE b2) = FALSE
+smallStepB (And b1 b2) = And (smallStepB b1) b2
+smallStepB (Or TRUE b2) = TRUE
+smallStepB (Or FALSE b2) = b2
+smallStepB (Or b1 b2) = Or (smallStepB b1) b2
+smallStepB (Leq (Num n1) (Num n2)) = if n1 <= n2 then TRUE else FALSE
+smallStepB (Leq (Num n) e) = Leq (Num n) (smallStepE e)
+smallStepB (Leq e1 e2) = Leq (smallStepE e1) e2
+
+interpretB :: B -> B
+interpretB b = if (isFinalB b) then b else interpretB (smallStepB b)
+
+isFinalB :: B -> Bool
+isFinalB (TRUE) = True
+isFinalB (FALSE) = True
+isFinalB _ = False
+
