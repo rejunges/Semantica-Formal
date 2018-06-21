@@ -82,14 +82,14 @@ cbigStep (Repeat c b, s) = let	(c1, s1) = cbigStep(c,s)
 				in(case bbigStep(b, s1) of
 				(True, _) -> cbigStep(Skip, s1)
 				(False, _) -> cbigStep(Repeat c b, s1))
-				 
+
 cbigStep (Do c b, s) = let (c1, s1) = cbigStep(c,s)
 			in(case bbigStep(b,s1) of
 			(True, _) -> cbigStep(Do c b, s1)
 			(False, _) -> cbigStep(Skip, s1))
 
-cbigStep (For (Var x) e1 e2 c,s) = cbigStep(Seq 
-					(Atrib (Var x) e1)  					
+cbigStep (For (Var x) e1 e2 c,s) = cbigStep(Seq
+					(Atrib (Var x) e1)
 					(If (Leq e1 e2) (Seq c (For (Var x) (Som e1 (Num 1)) e2 c)) (Skip)), s)
 
 
@@ -151,8 +151,11 @@ fatorial = (Seq (Atrib (Var "y") (Num 1))
 
 --fazer com Estado [("x",0), ("y",10)]
 testeRepeat :: CExp
-testeRepeat = (Repeat (Atrib (Var "x") (Sum (Num 1) (Num 1)) ) until (Ig (Var "x") (Var "y") ) )
+testeRepeat = (Repeat ( Atrib (Var "x") (Som (Var "x") (Num 1)) ) (Ig (Var "x") (Var "y") ) )
+--Resultado: (Skip,[("x",10),("y",10)])
+
 
 --fazer com Estado [("x",1)]
 testeDo :: CExp
-testeDo = (Do (Atrib (Var "x") (Mult (Var "x") (Num 2) )  While ( (Ig (Var "x") (Num 64)) ) ) )
+testeDo = (Do (Atrib (Var "x") (Mul (Var "x") (Num 2) ) )  (Leq (Var "x") (Num 64) ) )
+-- Resultado: (Skip,[("x",128)])
