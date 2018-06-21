@@ -92,6 +92,16 @@ cbigStep (For (Var x) e1 e2 c,s) = cbigStep(Seq
 					(Atrib (Var x) e1)
 					(If (Leq e1 e2) (Seq c (For (Var x) (Som e1 (Num 1)) e2 c)) (Skip)), s)
 
+cbigStep (Swap (Var x) (Var y), s) = let	(x_aux, s1) = abigStep(Var x, s)
+						(y_value, s2) = abigStep(Var y, s)
+						(e, new_s) = cbigStep(Atrib (Var x) (Num y_value), s)
+						(e1, final_s) = cbigStep(Atrib (Var y) (Num x_aux), new_s)
+							in (Skip, final_s)
+
+cbigStep (AtribDupla (Var x) (Var y) e1 e2, s) = cbigStep(Seq
+					(Atrib (Var x) e1)
+          (Atrib (Var y) e2), s)
+
 
 -- TESTES
 meuEstado :: Estado
@@ -159,3 +169,11 @@ testeRepeat = (Repeat ( Atrib (Var "x") (Som (Var "x") (Num 1)) ) (Ig (Var "x") 
 testeDo :: CExp
 testeDo = (Do (Atrib (Var "x") (Mul (Var "x") (Num 2) ) )  (Leq (Var "x") (Num 64) ) )
 -- Resultado: (Skip,[("x",128)])
+
+-- Soma X de 0 até 10
+--fazer com Estado [("x",0)]
+For (Var "x") (Som (Var "x") (Num 1)) (Mul (Num 2) (Mul 5)) (Atrib (Var "x") (Num 1))
+
+
+--fazer com Estado [("x",1), ("y", 3)]
+Swap((Var "x") (Var "y"))
