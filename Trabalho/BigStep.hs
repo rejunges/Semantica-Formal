@@ -21,7 +21,7 @@ data CExp =    While BExp CExp
 		| Seq CExp CExp
 		| Atrib AExp AExp
                 | Skip
-	deriving(Show)                
+	deriving(Show)
 
 
 
@@ -44,7 +44,7 @@ bbigStep (TRUE,s)  	= (True,s)
 bbigStep (FALSE,s) 	= (False,s)
 bbigStep (Not b,s) = case bbigStep (b,s) of
 		(True,_) -> (False, s)
-                (False,_) -> (True, s)  	
+                (False,_) -> (True, s)
 bbigStep (Ig e1 e2,s ) = let	(b1, s1) = abigStep(e1, s)
 				(b2, s2) = abigStep(e2, s)
 					in(b1==b2, s)
@@ -75,12 +75,16 @@ cbigStep (While b c, s) = case bbigStep(b,s) of
 -- TESTES
 meuEstado :: Estado
 meuEstado = [("x",3), ("y",0), ("z",0)]
+meuEstado2 :: Estado
+meuEstado2 = [("x",5), ("y",0), ("z",0)]
 
 testeIg :: BExp
 testeIg = Ig (Num 3) (Num 3)
+-- bbigStep ((Ig (Num 2) (Num 3)), meuEstado ) -> (False,[("x",3),("y",0),("z",0)])
 
 testeAnd :: BExp
 testeAnd = And TRUE (Not FALSE)
+--bbigStep ((And FALSE (Not FALSE)), meuEstado ) -> (False,[("x",3),("y",0),("z",0)])
 
 testeOr :: BExp
 testeOr = Or (And TRUE TRUE) (Not TRUE)
@@ -111,7 +115,7 @@ teste2 = (Ig (Som (Var "x") (Num 3))  (Mul (Num 2) (Num 3)))
 
 
 testec1 :: CExp
-testec1 = (Seq (Seq (Atrib (Var "z") (Var "x")) (Atrib (Var "x") (Var "y"))) 
+testec1 = (Seq (Seq (Atrib (Var "z") (Var "x")) (Atrib (Var "x") (Var "y")))
 		(Atrib (Var "y") (Var "z")))
 
 fatorial :: CExp
@@ -119,3 +123,15 @@ fatorial = (Seq (Atrib (Var "y") (Num 1))
                 (While (Not (Ig (Var "x") (Num 1)))
                        (Seq (Atrib (Var "y") (Mul (Var "y") (Var "x")))
                             (Atrib (Var "x") (Sub (Var "x") (Num 1))))))
+
+-- Com meuEstado -> X! colocado em Y -> (Skip,[("x",1),("y",6),("z",0)])
+-- Com meuEstado2 -> X! colocado em Y -> (Skip,[("x",1),("y",120),("z",0)])
+
+
+--fazer com Estado [("x",0), ("y",10)]
+testeRepeat :: CExp
+testeRepeat = (Repeat (Atrib (Var "x") (Sum (Num 1) (Num 1)) ) until (Ig (Var "x") (Var "y") ) )
+
+--fazer com Estado [("x",1)]
+testeDo :: CExp
+testeDo = (Do (Atrib (Var "x") (Mult (Var "x") (Num 2) )  While ( (Ig (Var "x") (Num 64)) ) ) )
