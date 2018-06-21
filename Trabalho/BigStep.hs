@@ -14,9 +14,13 @@ data BExp =	 TRUE
 		| And BExp BExp
                 | Or  BExp BExp
 		| Ig  AExp AExp
+		| Leq AExp AExp
               deriving(Show)
 
 data CExp =    While BExp CExp
+		| Repeat CExp BExp
+		| Do CExp BExp
+		| For AExp AExp AExp CExp
 		| If BExp CExp CExp
 		| Seq CExp CExp
 		| Atrib AExp AExp
@@ -54,6 +58,10 @@ bbigStep (And b1 b2,s )  = let	(n1, s1) = bbigStep(b1, s)
 bbigStep (Or b1 b2,s )  = let	(n1, s1) = bbigStep(b1, s)
 				(n2, s2) = bbigStep(b2, s)
 					in(n1 || n2, s)
+bbigStep (Leq e1 e2,s)	= let 	(n1,s1) = abigStep(e1, s)
+				(n2,s2) = abigStep (e2, s)
+					in (n1<=n2,s)
+
 
 cbigStep :: (CExp,Estado) -> (CExp,Estado)
 cbigStep (Skip,s)      	= (Skip,s)
@@ -70,6 +78,19 @@ cbigStep (While b c, s) = case bbigStep(b,s) of
 			(True, _) -> cbigStep(Seq (c) (While b c), s)
 			(False, _) -> cbigStep(Skip, s)
 
+cbigStep (Repeat c b, s) = let	(c1, s1) = cbigStep(c,s)
+				in(case bbigStep(b, s1) of
+				(True, _) -> cbigStep(Skip, s1)
+				(False, _) -> cbigStep(Repeat c b, s1))
+				 
+cbigStep (Do c b, s) = let (c1, s1) = cbigStep(c,s)
+			in(case bbigStep(b,s1) of
+			(True, _) -> cbigStep(Do c b, s1)
+			(False, _) -> cbigStep(Skip, s1))
+
+cbigStep (For (Var x) e1 e2 c,s) = cbigStep(Seq 
+					(Atrib (Var x) e1)  					
+					(If (Leq e1 e2) (Seq c (For (Var x) (Som e1 (Num 1)) e2 c)) (Skip)), s)
 
 
 -- TESTES
