@@ -21,6 +21,8 @@ data CExp =    While BExp CExp
 		| Repeat CExp BExp
 		| Do CExp BExp
 		| For AExp AExp AExp CExp
+		| Swap AExp AExp
+    | AtribDupla AExp AExp AExp AExp
 		| If BExp CExp CExp
 		| Seq CExp CExp
 		| Atrib AExp AExp
@@ -170,10 +172,18 @@ testeDo :: CExp
 testeDo = (Do (Atrib (Var "x") (Mul (Var "x") (Num 2) ) )  (Leq (Var "x") (Num 64) ) )
 -- Resultado: (Skip,[("x",128)])
 
+
+--Esta com erro:
 -- Soma X de 0 até 10
 --fazer com Estado [("x",0)]
-For (Var "x") (Som (Var "x") (Num 1)) (Mul (Num 2) (Mul 5)) (Atrib (Var "x") (Num 1))
+testeFor:: CExp
+testeFor = (For (Var "x") (Var "x") (Mul (Num 2) (Num 5) ) (Atrib (Var "x") (Num 1)))
 
 
 --fazer com Estado [("x",1), ("y", 3)]
-Swap((Var "x") (Var "y"))
+testeSwap :: CExp
+testeSwap = (Swap (Var "x") (Var "y") )
+
+--fazer com Estado [("x",1), ("y", 3)], mas n faz muita diferença
+testeAtribDupla :: CExp
+testeAtribDupla = (AtribDupla (Var "x") (Var "y") (Som (Num 3) (Num 7)) (Sub (Num 10) (Num 4) ) )
