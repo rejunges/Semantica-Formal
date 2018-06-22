@@ -110,6 +110,9 @@ meuEstado :: Estado
 meuEstado = [("x",3), ("y",0), ("z",0)]
 meuEstado2 :: Estado
 meuEstado2 = [("x",5), ("y",0), ("z",0)]
+meuEstado3 :: Estado
+meuEstado3 = [("x",0), ("y",0), ("z",1)]
+
 
 testeIg :: BExp
 testeIg = Ig (Num 3) (Num 3)
@@ -173,11 +176,9 @@ testeDo = (Do (Atrib (Var "x") (Mul (Var "x") (Num 2) ) )  (Leq (Var "x") (Num 6
 -- Resultado: (Skip,[("x",128)])
 
 
---Esta com erro:
--- Soma X de 0 até 10
---fazer com Estado [("x",0)]
+-- X de 1 até 10 incrementando y em 2 unidades e z recebe a soma de z + y
 testeFor:: CExp
-testeFor = (For (Var "x") (Var "x") (Mul (Num 2) (Num 5) ) (Atrib (Var "x") (Num 1)))
+testeFor = (For (Var "x") (Num 1) (Num 10)  (Seq (Atrib (Var "y") (Som (Var "y") (Num 2))) (Atrib (Var "z") (Som (Var "z") (Var "y")))))
 
 
 --fazer com Estado [("x",1), ("y", 3)]
