@@ -94,11 +94,12 @@ cbigStep (For (Var x) e1 e2 c,s) = cbigStep(Seq
 					(Atrib (Var x) e1)
 					(If (Leq e1 e2) (Seq c (For (Var x) (Som e1 (Num 1)) e2 c)) (Skip)), s)
 
-cbigStep (Swap (Var x) (Var y), s) = let	(x_aux, s1) = abigStep(Var x, s)
-						(y_value, s2) = abigStep(Var y, s)
-						(e, new_s) = cbigStep(Atrib (Var x) (Num y_value), s)
-						(e1, final_s) = cbigStep(Atrib (Var y) (Num x_aux), new_s)
-							in (Skip, final_s)
+cbigStep (Swap (Var x) (Var y), s) = (Skip, mudaVar (mudaVar s x (procuraVar s y)) y (procuraVar s x)  )  
+--cbigStep (Swap (Var x) (Var y), s) = let	(x_aux, s1) = abigStep(Var x, s)
+--						(y_value, s2) = abigStep(Var y, s)
+--						(e, new_s) = cbigStep(Atrib (Var x) (Num y_value), s)
+--						(e1, final_s) = cbigStep(Atrib (Var y) (Num x_aux), new_s)
+--							in (Skip, final_s)
 
 cbigStep (AtribDupla (Var x) (Var y) e1 e2, s) = cbigStep(Seq
 					(Atrib (Var x) e1)
@@ -111,7 +112,7 @@ meuEstado = [("x",3), ("y",0), ("z",0)]
 meuEstado2 :: Estado
 meuEstado2 = [("x",5), ("y",0), ("z",0)]
 meuEstado3 :: Estado
-meuEstado3 = [("x",0), ("y",0), ("z",1)]
+meuEstado3 = [("x",1), ("y",0), ("z",0)]
 
 
 testeIg :: BExp
@@ -169,7 +170,8 @@ testeRepeat :: CExp
 testeRepeat = (Repeat ( Atrib (Var "x") (Som (Var "x") (Num 1)) ) (Ig (Var "x") (Var "y") ) )
 --Resultado: (Skip,[("x",10),("y",10)])
 
-
+meuEstado4 :: Estado
+meuEstado4 = [("x",1)]
 --fazer com Estado [("x",1)]
 testeDo :: CExp
 testeDo = (Do (Atrib (Var "x") (Mul (Var "x") (Num 2) ) )  (Leq (Var "x") (Num 64) ) )
@@ -180,7 +182,8 @@ testeDo = (Do (Atrib (Var "x") (Mul (Var "x") (Num 2) ) )  (Leq (Var "x") (Num 6
 testeFor:: CExp
 testeFor = (For (Var "x") (Num 1) (Num 10)  (Seq (Atrib (Var "y") (Som (Var "y") (Num 2))) (Atrib (Var "z") (Som (Var "z") (Var "y")))))
 
-
+meuEstado5 :: Estado
+meuEstado5 = [("x",1), ("y",3)]
 --fazer com Estado [("x",1), ("y", 3)]
 testeSwap :: CExp
 testeSwap = (Swap (Var "x") (Var "y") )
